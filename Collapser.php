@@ -4,15 +4,18 @@
 
 abstract class Collapser
 {
-  const FIRST_INDEX = 1;
+  const FIRST_INDEX = 0;
   const DAY_OFFSET = 0;
+  const DAY_LENGTH = 5;
   const MONTH_OFFSET = 3;
+  const MONTH_LENGTH = 2;
 
   protected float $temperatureSum;
   protected int $count;
   protected array $collapsedArray;
   protected string $currentPeriod;
   protected int $stringOffset;
+  protected int $substringLength;
 
   protected function __construct(array $srcDataRows, array &$collapsedArray)
   {
@@ -38,7 +41,7 @@ abstract class Collapser
 
   protected function parsePeriod(string $date)
   {
-    return substr($date, $this->stringOffset, 2);
+    return substr($date, $this->stringOffset, $this->substringLength);
   }
 
   protected function pushCollapsedPeriod()
@@ -55,9 +58,10 @@ abstract class Collapser
 
 class CollapserBySubstringChange extends Collapser
 {
-  public function __construct(array $srcDataRows, array &$collapsedArray, int $stringOffset)
+  public function __construct(array $srcDataRows, array &$collapsedArray, int $stringOffset, int $substringLength)
   {
     $this->stringOffset = $stringOffset;
+    $this->substringLength = $substringLength;
 
     $this->currentPeriod = $this->parsePeriod($srcDataRows[self::FIRST_INDEX][0]);
 
@@ -95,11 +99,12 @@ class CollapserByWeek extends Collapser
   public function __construct(array $srcDataRows, array &$collapsedArray)
   {
     $this->stringOffset = self::DAY_OFFSET;
-    $this->isLastDayOfYear = true;
-    $this->currentPeriod = '53';  // В 2021г было 52 полных недели + 1 день
+    $this->substringLength = self::DAY_LENGTH;
+    // $this->isLastDayOfYear = false;
+    $this->currentPeriod = '1';  
     $this->currentDay = '31';
     $this->dayCount = 1;
-    $this->currentWeek = 53;
+    $this->currentWeek = 1;
 
     parent::__construct($srcDataRows, $collapsedArray);
 
@@ -109,15 +114,9 @@ class CollapserByWeek extends Collapser
   {
     $day = $this->parsePeriod($srcDataRowCells[0]);
 
-    if($day !== $this->currentDay) 
-    {
-      if($this->isLastDayOfYear) {
-        $this->isLastDayOfYear = false;
-
-        $this->pushCollapsedPeriod();
-        $this->reset(); 
-      }
-      else if(++$this->dayCount > 7) {
+    if($day !== $this->currentDay) {
+      ++$this->dayCount;
+      if($this->dayCount > 7) {
         $this->pushCollapsedPeriod();
         $this->reset();
       }
@@ -131,7 +130,7 @@ class CollapserByWeek extends Collapser
   protected function reset() {
     parent::reset();
     $this->dayCount = 1;
-    $this->currentPeriod = (string)--$this->currentWeek;
+    $this->currentPeriod = (string)++$this->currentWeek;
   }
   
 }

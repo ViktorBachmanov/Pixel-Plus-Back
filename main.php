@@ -20,18 +20,24 @@ while($rowCells = fgetcsv($file, null, ";", '"')) {
 
 fclose($file);
 
+$reversedArr = array_reverse($dateTemperature);
+
+array_pop($reversedArr);  // remove header of source data
+
+// print_r($reversedArr);
+
 
 $period = $_GET['period'];
 
 switch($period) {
   case 'day':
-    $collapsedData = new CollapsedDataByDay($dateTemperature);
+    $collapsedData = new CollapsedDataByDay($reversedArr);
     break;
   case 'week':
-    $collapsedData = new CollapsedDataByWeek($dateTemperature);
+    $collapsedData = new CollapsedDataByWeek($reversedArr);
     break;
   case 'month':
-    $collapsedData = new CollapsedDataByMonth($dateTemperature);
+    $collapsedData = new CollapsedDataByMonth($reversedArr);
     break;
 }
 

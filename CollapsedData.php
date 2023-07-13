@@ -23,7 +23,7 @@ class CollapsedDataByDay extends CollapsedData
   {
     parent::__construct();
 
-    new CollapserBySubstringChange($srcDataRows, $this->arr, Collapser::DAY_OFFSET);    
+    new CollapserBySubstringChange($srcDataRows, $this->arr, Collapser::DAY_OFFSET, Collapser::DAY_LENGTH);    
   }
   
 }
@@ -38,7 +38,7 @@ class CollapsedDataByMonth extends CollapsedData
   {
     parent::__construct();
 
-    new CollapserBySubstringChange($srcDataRows, $this->arr, Collapser::MONTH_OFFSET);    
+    new CollapserBySubstringChange($srcDataRows, $this->arr, Collapser::MONTH_OFFSET, Collapser::MONTH_LENGTH);    
   }
   
 }
