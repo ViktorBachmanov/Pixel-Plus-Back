@@ -30,6 +30,8 @@ switch($period) {
   case 'month':
     $collapsedData = new PeriodCollapserBySubstringChange($dateTemperature, PeriodCollapser::MONTH_OFFSET, PeriodCollapser::MONTH_LENGTH);
     break;
+  default:
+    exit('Error');
 }
 
 

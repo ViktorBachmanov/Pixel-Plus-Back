@@ -2,7 +2,6 @@
 
 abstract class PeriodCollapser
 {
-  const FIRST_INDEX = 0;
   const DAY_OFFSET = 0;
   const DAY_LENGTH = 5;
   const MONTH_OFFSET = 3;
@@ -20,8 +19,8 @@ abstract class PeriodCollapser
     $this->temperatureSum = 0;
     $this->temperaturesCount = 0;
 
-    for($i = self::FIRST_INDEX; $i < count($srcDataRows); $i++) {
-      $this->processSrcDataRow($srcDataRows[$i]);
+    foreach($srcDataRows as $srcDataRow) {
+      $this->processSrcDataRow($srcDataRow);
     }
 
     $this->pushCollapsedPeriod();   // push the last collapsed period
@@ -58,7 +57,7 @@ class PeriodCollapserBySubstringChange extends PeriodCollapser
     $this->stringOffset = $stringOffset;
     $this->substringLength = $substringLength;
 
-    $this->currentPeriod = $this->parsePeriod($srcDataRows[self::FIRST_INDEX][0]);
+    $this->currentPeriod = $this->parsePeriod($srcDataRows[0][0]);
 
     parent::__construct($srcDataRows);
 
@@ -87,7 +86,6 @@ class PeriodCollapserBySubstringChange extends PeriodCollapser
 
 class PeriodCollapserByWeek extends PeriodCollapser
 {
-  private bool $isLastDayOfYear;
   private string $currentDay;
   private int $dayCount;
 
@@ -96,9 +94,9 @@ class PeriodCollapserByWeek extends PeriodCollapser
     $this->stringOffset = self::DAY_OFFSET;
     $this->substringLength = self::DAY_LENGTH;
     $this->currentPeriod = '1';  
-    $this->currentDay = '31';
-    $this->dayCount = 1;
     $this->currentWeek = 1;
+    $this->currentDay = '01';
+    $this->dayCount = 1;
 
     parent::__construct($srcDataRows);
 
