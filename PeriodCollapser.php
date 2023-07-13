@@ -1,6 +1,6 @@
 <?php
 
-abstract class Collapser
+abstract class PeriodCollapser
 {
   const FIRST_INDEX = 0;
   const DAY_OFFSET = 0;
@@ -9,7 +9,7 @@ abstract class Collapser
   const MONTH_LENGTH = 2;
 
   protected float $temperatureSum;
-  protected int $count;
+  protected int $temperaturesCount;
   public array $arr;  // array<PeriodData>
   protected string $currentPeriod;
   protected int $stringOffset;
@@ -51,7 +51,7 @@ abstract class Collapser
 //================================================
 
 
-class CollapserBySubstringChange extends Collapser
+class PeriodCollapserBySubstringChange extends PeriodCollapser
 {
   public function __construct(array $srcDataRows, int $stringOffset, int $substringLength)
   {
@@ -85,7 +85,7 @@ class CollapserBySubstringChange extends Collapser
 //================================================
 
 
-class CollapserByWeek extends Collapser
+class PeriodCollapserByWeek extends PeriodCollapser
 {
   private bool $isLastDayOfYear;
   private string $currentDay;

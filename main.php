@@ -2,7 +2,7 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-require_once 'Collapser.php';
+require_once 'PeriodCollapser.php';
 
 
 $file = fopen('weather_statistics.csv', 'rt') or die('Error');
@@ -22,13 +22,13 @@ $period = $_GET['period'];
 
 switch($period) {
   case 'day':
-    $collapsedData = new CollapserBySubstringChange($dateTemperature, Collapser::DAY_OFFSET, Collapser::DAY_LENGTH); 
+    $collapsedData = new PeriodCollapserBySubstringChange($dateTemperature, PeriodCollapser::DAY_OFFSET, PeriodCollapser::DAY_LENGTH); 
     break;
   case 'week':
-    $collapsedData = new CollapserByWeek($dateTemperature);  
+    $collapsedData = new PeriodCollapserByWeek($dateTemperature);  
     break;
   case 'month':
-    $collapsedData = new CollapserBySubstringChange($dateTemperature, Collapser::MONTH_OFFSET, Collapser::MONTH_LENGTH);
+    $collapsedData = new PeriodCollapserBySubstringChange($dateTemperature, PeriodCollapser::MONTH_OFFSET, PeriodCollapser::MONTH_LENGTH);
     break;
 }
 
