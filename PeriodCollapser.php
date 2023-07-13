@@ -44,6 +44,12 @@ abstract class PeriodCollapser
     $this->arr[] = new PeriodData($this->currentPeriod, $avg);
   }
 
+  protected function addTemperatureIntoCollapsedPeriod(string $temperature) {
+    $this->temperatureSum += (float)$temperature;
+    $this->temperaturesCount++;  
+  }
+
+
 }
 
 
@@ -74,8 +80,7 @@ class PeriodCollapserBySubstringChange extends PeriodCollapser
       $this->currentPeriod = $period;
     }
 
-    $this->temperatureSum += (float)$srcDataRowCells[1];
-    $this->temperaturesCount++;
+    $this->addTemperatureIntoCollapsedPeriod($srcDataRowCells[1]);
   }
 
 }
@@ -95,7 +100,7 @@ class PeriodCollapserByWeek extends PeriodCollapser
     $this->substringLength = self::DAY_LENGTH;
     $this->currentPeriod = '1';  
     $this->currentWeek = 1;
-    $this->currentDay = '01';
+    $this->currentDay = '01.01';
     $this->dayCount = 1;
 
     parent::__construct($srcDataRows);
@@ -115,8 +120,7 @@ class PeriodCollapserByWeek extends PeriodCollapser
       $this->currentDay = $day;
     }
 
-    $this->temperatureSum += (float)$srcDataRowCells[1];
-    $this->temperaturesCount++;    
+    $this->addTemperatureIntoCollapsedPeriod($srcDataRowCells[1]);
   } 
 
   protected function reset() {
