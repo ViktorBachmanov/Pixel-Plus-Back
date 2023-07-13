@@ -24,6 +24,8 @@ abstract class PeriodCollapser
     }
 
     $this->pushCollapsedPeriod();   // push the last collapsed period
+
+    $this->seedSlidingFields();
   }
 
   abstract protected function processSrcDataRow(array $srcDataRowCells);
@@ -49,6 +51,16 @@ abstract class PeriodCollapser
     $this->temperaturesCount++;  
   }
 
+  private function seedSlidingFields() 
+  {
+    $prevAverage = $this->arr[0]->average;
+
+    for($i = 0; $i < count($this->arr); $i++) {
+      $this->arr[$i]->sliding = ($prevAverage + $this->arr[$i]->average) / 2;
+      
+      $prevAverage = $this->arr[$i]->average;
+    }
+  }
 
 }
 

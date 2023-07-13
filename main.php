@@ -35,13 +35,4 @@ switch($period) {
 }
 
 
-$prevAverage = $collapsedData->arr[0]->average;
-
-for($i = 0; $i < count($collapsedData->arr); $i++) {
-  $collapsedData->arr[$i]->sliding = ($prevAverage + $collapsedData->arr[$i]->average) / 2;
-  
-  $prevAverage = $collapsedData->arr[$i]->average;
-}
-
-
 echo json_encode($collapsedData->arr);
