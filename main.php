@@ -2,54 +2,36 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-require_once 'CollapsedData.php';
+require_once 'Collapser.php';
 
 
 $file = fopen('weather_statistics.csv', 'rt') or die('Error');
 
-$count = 0;
 while($rowCells = fgetcsv($file, null, ";", '"')) {
-  // print_r($rowCells);
-  // $dateTemperature[$row[0]] = $row[1];
   $dateTemperature[] = [$rowCells[0], $rowCells[1]];
-
-  // if(++$count > 30) {
-  //   break;
-  // }
 }
 
 fclose($file);
 
-$reversedArr = array_reverse($dateTemperature);
+$dateTemperature = array_reverse($dateTemperature);
 
-array_pop($reversedArr);  // remove header of source data
-
-// print_r($reversedArr);
+array_pop($dateTemperature);  // remove header of source data
 
 
 $period = $_GET['period'];
 
 switch($period) {
   case 'day':
-    $collapsedData = new CollapsedDataByDay($reversedArr);
+    $collapsedData = new CollapserBySubstringChange($dateTemperature, Collapser::DAY_OFFSET, Collapser::DAY_LENGTH); 
     break;
   case 'week':
-    $collapsedData = new CollapsedDataByWeek($reversedArr);
+    $collapsedData = new CollapserByWeek($dateTemperature);  
     break;
   case 'month':
-    $collapsedData = new CollapsedDataByMonth($reversedArr);
+    $collapsedData = new CollapserBySubstringChange($dateTemperature, Collapser::MONTH_OFFSET, Collapser::MONTH_LENGTH);
     break;
 }
 
-// echo "///////////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////////////////\n";
-
-// print_r($dateTemperature);
-
-// for($i = 0; $i < 20; $i++) {
-//   print_r($dateTemperature[$i]); 
-// }
 
 $prevAverage = $collapsedData->arr[0]->average;
 
@@ -60,8 +42,4 @@ for($i = 0; $i < count($collapsedData->arr); $i++) {
 }
 
 
-
-// print_r($collapsedData->arr);
-
 echo json_encode($collapsedData->arr);
-

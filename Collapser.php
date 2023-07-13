@@ -1,7 +1,5 @@
 <?php
 
-// Strategy pattern
-
 abstract class Collapser
 {
   const FIRST_INDEX = 0;
@@ -12,16 +10,13 @@ abstract class Collapser
 
   protected float $temperatureSum;
   protected int $count;
-  protected array $collapsedArray;
+  public array $arr;  // array<PeriodData>
   protected string $currentPeriod;
   protected int $stringOffset;
   protected int $substringLength;
 
-  protected function __construct(array $srcDataRows, array &$collapsedArray)
+  protected function __construct(array $srcDataRows)
   {
-    $this->collapsedArray = &$collapsedArray;
-
-    // $this->reset();
     $this->temperatureSum = 0;
     $this->temperaturesCount = 0;
 
@@ -47,7 +42,7 @@ abstract class Collapser
   protected function pushCollapsedPeriod()
   {
     $avg = $this->temperatureSum / $this->temperaturesCount;
-    $this->collapsedArray[] = new PeriodData($this->currentPeriod, $avg);
+    $this->arr[] = new PeriodData($this->currentPeriod, $avg);
   }
 
 }
@@ -58,14 +53,14 @@ abstract class Collapser
 
 class CollapserBySubstringChange extends Collapser
 {
-  public function __construct(array $srcDataRows, array &$collapsedArray, int $stringOffset, int $substringLength)
+  public function __construct(array $srcDataRows, int $stringOffset, int $substringLength)
   {
     $this->stringOffset = $stringOffset;
     $this->substringLength = $substringLength;
 
     $this->currentPeriod = $this->parsePeriod($srcDataRows[self::FIRST_INDEX][0]);
 
-    parent::__construct($srcDataRows, $collapsedArray);
+    parent::__construct($srcDataRows);
 
   }
 
@@ -96,17 +91,16 @@ class CollapserByWeek extends Collapser
   private string $currentDay;
   private int $dayCount;
 
-  public function __construct(array $srcDataRows, array &$collapsedArray)
+  public function __construct(array $srcDataRows)
   {
     $this->stringOffset = self::DAY_OFFSET;
     $this->substringLength = self::DAY_LENGTH;
-    // $this->isLastDayOfYear = false;
     $this->currentPeriod = '1';  
     $this->currentDay = '31';
     $this->dayCount = 1;
     $this->currentWeek = 1;
 
-    parent::__construct($srcDataRows, $collapsedArray);
+    parent::__construct($srcDataRows);
 
   }
 
@@ -133,4 +127,21 @@ class CollapserByWeek extends Collapser
     $this->currentPeriod = (string)++$this->currentWeek;
   }
   
+}
+
+
+/////////////////////////////////////////////////
+
+
+class PeriodData
+{
+  public string $period;
+  public float $average;
+  public float $sliding;
+
+  public function __construct(string $period, float $average)
+  {
+    $this->period = $period;
+    $this->average = $average;
+  }
 }
