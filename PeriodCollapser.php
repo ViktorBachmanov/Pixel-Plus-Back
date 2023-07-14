@@ -112,7 +112,7 @@ class PeriodCollapserByWeek extends PeriodCollapser
     $this->substringLength = self::DAY_LENGTH;
     $this->currentPeriod = '1';  
     $this->currentWeek = 1;
-    $this->currentDay = '01.01';
+    $this->currentDay = $this->parsePeriod($srcDataRows[0][0]);
     $this->dayCount = 1;
 
     parent::__construct($srcDataRows);
